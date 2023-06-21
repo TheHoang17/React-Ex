@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import { Navbar, NavbarBrand } from 'reactstrap';
 import Menu from './MenuComponent';
-import DishDetail from './DishdetailComponent';
+import DishDetail from './DishDetailComponent';
 import { DISHES } from '../shared/dishes';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import Home from './HomeComponent';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import Contact from './ContactComponent';
 import { COMMENTS } from '../shared/comments';
 import { PROMOTIONS } from '../shared/promotions';
 import { LEADERS } from '../shared/leaders';
+import About from './AboutComponent';
 
 class Main extends Component {
 
@@ -30,16 +30,17 @@ class Main extends Component {
   }
 
   render() {
-    const DishWithId = ({ match }) => {
+    const DishWithId = () => {
+      const {dishId} = useParams();
       return (
         <DishDetail
           dish={
             this.state.dishes.filter(
-              (dish) => dish.id === parseInt(match.params.dishId, 10)
+              (dish) => dish.id === parseInt(dishId, 10)
             )[0]
           }
           comments={this.state.comments.filter(
-            (comment) => comment.dishId === parseInt(match.params.dishId, 10)
+            (comment) => comment.dishId === parseInt(dishId, 10)
           )}
         />
       );
@@ -47,7 +48,7 @@ class Main extends Component {
 
     const HomePage = () => {
       return(
-          <Home               dish={this.state.dishes.filter((dish) => dish.featured)[0]}
+          <Home      dish={this.state.dishes.filter((dish) => dish.featured)[0]}
           promotion={this.state.promotions.filter((promo) => promo.featured)[0]}
           leader={this.state.leaders.filter((leader) => leader.featured)[0]}
 
@@ -62,7 +63,9 @@ class Main extends Component {
           <Route path="/home" element={<HomePage />} />
           <Route path="/menu" element={<Menu dishes={this.state.dishes} onClick={(dishId) => this.onDishSelect(dishId)} />} />
           <Route exact path='/contactus' Component={Contact} />
-          <Route path="/menu/:dishId" component={DishWithId} />
+          <Route exact path="/aboutus" Component={() => <About dishes={this.state.leaders} />}
+          />
+          <Route path="/menu/:dishId" Component={DishWithId} />
           <Route path="/" element={<Navigate to="/menu" />} />
 
         </Routes>
